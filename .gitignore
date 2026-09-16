@@ -1,8 +1,7 @@
 # 编译产物（交叉编译生成的 ARM 可执行文件）
+/test_LED/led
 /test_LED/led_main
-/test_LED/led_triger_led
-/test_LED/led_trigger_led
-/test_LED/led_turn_off
+/test_LED/led_trigger
 
 /test_beep/beep
 /test_beep/beep_main
