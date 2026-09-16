@@ -141,12 +141,12 @@ static int freetype_init(const char *font, int angle)
     return 0;
 }
 
-
 /*
-    * @brief: 在 LCD 上绘制字符
+    * @brief: 把一串宽字符（中文）逐个渲染成字形位图，再
+                写入 framebuffer 显示
     * @param: x 字符绘制的起始 x 坐标
     * @param: y 字符绘制的起始 y 坐标
-    * @param: str 待绘制的字符串
+    * @param: str 待绘制的字符串,宽字符串（L"..."），每个字符是 wchar_t，支持中文
     * @param: color 字符颜色，ARGB8888 格式
     * @return: void
     * @note: 1. 循环加载各个字符，获取字形位图数据
@@ -156,7 +156,12 @@ static void lcd_draw_character(int x, int y,
                                const wchar_t *str, unsigned int color)
 {
     unsigned short rgb565_color = argb8888_to_rgb565(color); // 得到 RGB565 颜色值
-    FT_GlyphSlot slot = face->glyph;
+    /*
+    取字形槽（后续每次都覆盖）。
+    slot = face->glyph 只是一个指针，指向 FreeType 内部维护的当前字形槽。每次 FT_Load_Char() 后它指向的内容会更新，所以拿到后要立刻使用
+    */
+    FT_GlyphSlot slot = face->glyph;  
+    
     size_t len = wcslen(str); // 计算字符的个数
     long int temp;
     int n;
@@ -166,9 +171,16 @@ static void lcd_draw_character(int x, int y,
     // 循环加载各个字符
     for (n = 0; n < len; n++)
     {
-        // 加载字形、转换得到位图数据
+        /*
+        加载字形、转换得到位图数据
+        FT_Load_Char 做了三件事：编码 → 字形索引 → 渲染成位图，渲染结果在 slot->bitmap。
+        */
         if (FT_Load_Char(face, str[n], FT_LOAD_RENDER))
             continue;
+        
+        /*
+        难点：坐标计算。先不管，后面再说 
+        */
         start_y = y - slot->bitmap_top; // 计算字形轮廓上边 y 坐标起点位置 注意是减去 bitmap_top
         if (0 > start_y)
         { // 如果为负数 如何处理？？
