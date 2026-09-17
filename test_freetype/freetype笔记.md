@@ -193,30 +193,34 @@ source /opt/fsl-imx-x11/4.1.15-2.1.0/environment-setup-cortexa7hf-neon-poky-linu
 
 ```bash
 # zlib
-./configure --prefix=/home/user/tools/zlib && make && make install
+./configure --prefix=/home/zr-arm/tools/zlib && make && make install
 
 # libpng（依赖 zlib，先 export 路径）
-export LDFLAGS="$LDFLAGS -L/home/user/tools/zlib/lib"
-export CFLAGS="$CFLAGS -I/home/user/tools/zlib/include"
-export CPPFLAGS="$CPPFLAGS -I/home/user/tools/zlib/include"
-./configure --prefix=/home/user/tools/png --host=arm-poky-linux-gnueabi && make && make install
+export LDFLAGS="$LDFLAGS -L/home/zr-arm/tools/zlib/lib"
+export CFLAGS="$CFLAGS -I/home/zr-arm/tools/zlib/include"
+export CPPFLAGS="$CPPFLAGS -I/home/zr-arm/tools/zlib/include"
+./configure --prefix=/home/zr-arm/tools/png --host=arm-poky-linux-gnueabi && make && make install
 
 # freetype（依赖 zlib + libpng）
-./configure --prefix=/home/user/tools/freetype --host=arm-poky-linux-gnueabi \
+./configure --prefix=/home/zr-arm/tools/freetype --host=arm-poky-linux-gnueabi \
     --with-zlib=yes --with-bzip2=no --with-png=yes --with-harfbuzz=no \
-    ZLIB_CFLAGS="-I/home/user/tools/zlib/include -L/home/user/tools/zlib/lib" ZLIB_LIBS=-lz \
-    LIBPNG_CFLAGS="-I/home/user/tools/png/include -L/home/user/tools/png/lib" LIBPNG_LIBS=-lpng \
+    ZLIB_CFLAGS="-I/home/zr-arm/tools/zlib/include -L/home/zr-arm/tools/zlib/lib" ZLIB_LIBS=-lz \
+    LIBPNG_CFLAGS="-I/home/zr-arm/tools/png/include -L/home/zr-arm/tools/png/lib" LIBPNG_LIBS=-lpng \
     && make && make install
 ```
 
-### 4.3 编译测试程序
+之后将安装在pc机的相关库的lib打包发送给开发板，然后在开发板上解压缩到相应目录
+
+
+
+### 4.4 编译测试程序
 
 ```bash
 arm-linux-gnueabihf-gcc \
-    -I/home/user/tools/freetype/include/freetype2 \
-    -L/home/user/tools/freetype/lib -lfreetype \
-    -L/home/user/tools/zlib/lib -lz \
-    -L/home/user/tools/png/lib -lpng \
+    -I/home/zr-arm/tools/freetype/include/freetype2 \
+    -L/home/zr-arm/tools/freetype/lib -lfreetype \
+    -L/home/zr-arm/tools/zlib/lib -lz \
+    -L/home/zr-arm/tools/png/lib -lpng \
     -lm -o test_freetype test_freetype.c
 ```
 

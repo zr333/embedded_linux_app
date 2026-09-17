@@ -226,6 +226,16 @@ static void lcd_draw_character(int x, int y,
     }
 }
 
+/*
+    * @brief: 主函数
+    * @param: 第一个参数：字体文件路径
+            第二个参数：旋转角度
+    * @return: 0 成功，-1 失败
+    * @note: 1. 初始化 framebuffer 设备
+           2. 初始化 freetype 库
+           3. 在 LCD 上显示中文
+           4. 退出程序，释放资源
+*/
 int main(int argc, char *argv[])
 {
     /* LCD 初始化 */
