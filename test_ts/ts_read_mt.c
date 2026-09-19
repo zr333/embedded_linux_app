@@ -75,7 +75,7 @@ int main(int argc, char *argv[])
         /*
          * ts_read_mt 的常见原型：
          *   int ts_read_mt(struct tsdev *ts, struct ts_sample_mt **samp, int max_slots, int nr)
-         * 说明（阅读本段注释即可，不修改调用）：
+         * 说明：
          * - ts: tslib 设备句柄
          * - samp: 指向 struct ts_sample_mt* 的指针，调用方可传入指向已分配数组的指针地址
          * - max_slots: 传入的数组最大元素数（避免越界）

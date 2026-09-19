@@ -10,11 +10,9 @@
 #include <sys/mman.h>
 #include <linux/fb.h>
 #include <math.h> //数学库函数头文件
-
 #include <wchar.h>
 #include <ft2build.h>
 #include FT_FREETYPE_H
-
 
 #define FB_DEV "/dev/fb0" // LCD 设备节点
 
@@ -32,7 +30,6 @@ static unsigned long screen_size;          // 显存总大小，单位：字节
 static int lcd_fd = -1;                    // LCD 设备文件描述符
 static FT_Library library;                 // FreeType 库对象
 static FT_Face face;                       // FreeType 字体对象
-
 
 /*
     * @brief: framebuffer 设备初始化
@@ -58,9 +55,9 @@ static int fb_dev_init(void)
     ioctl(lcd_fd, FBIOGET_FSCREENINFO, &fb_fix);
 
     // 显存缓冲区的大小，后续用于 mmap() 的映射长度参数和 memset() 清屏的范围
-    screen_size = fb_fix.line_length * fb_var.yres; 
-    width = fb_var.xres; // LCD 宽度
-    height = fb_var.yres;// LCD 高度
+    screen_size = fb_fix.line_length * fb_var.yres;
+    width = fb_var.xres;  // LCD 宽度
+    height = fb_var.yres; // LCD 高度
     /* 内存映射 */
     screen_base = mmap(NULL, screen_size, PROT_READ | PROT_WRITE, MAP_SHARED, lcd_fd, 0);
     if (MAP_FAILED == (void *)screen_base)
@@ -104,7 +101,7 @@ static int freetype_init(const char *font, int angle)
     pen.y = 0 * 64; // 原点设置为(0, 0)
     /* 2x2 矩阵初始化 */
     rad = (1.0 * angle / 180) * M_PI; // 角度转换为弧度
-#if 1                                 
+#if 1
     matrix.xx = (FT_Fixed)(cos(rad) * 0x10000L);
     matrix.xy = (FT_Fixed)(-sin(rad) * 0x10000L);
     matrix.yx = (FT_Fixed)(sin(rad) * 0x10000L);
@@ -160,8 +157,8 @@ static void lcd_draw_character(int x, int y,
     取字形槽（后续每次都覆盖）。
     slot = face->glyph 只是一个指针，指向 FreeType 内部维护的当前字形槽。每次 FT_Load_Char() 后它指向的内容会更新，所以拿到后要立刻使用
     */
-    FT_GlyphSlot slot = face->glyph;  
-    
+    FT_GlyphSlot slot = face->glyph;
+
     size_t len = wcslen(str); // 计算字符的个数
     long int temp;
     int n;
@@ -177,9 +174,9 @@ static void lcd_draw_character(int x, int y,
         */
         if (FT_Load_Char(face, str[n], FT_LOAD_RENDER))
             continue;
-        
+
         /*
-        难点：坐标计算。先不管，后面再说 
+        难点：坐标计算。先不管，后面再说
         */
         start_y = y - slot->bitmap_top; // 计算字形轮廓上边 y 坐标起点位置 注意是减去 bitmap_top
         if (0 > start_y)

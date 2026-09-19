@@ -20,6 +20,8 @@
 
 /test_freetype/test_freetype
 
+/V4L2/V4L2
+
 # 通用编译/编辑器产物
 *.o
 *.a
